@@ -1,0 +1,62 @@
+spring:
+ profiles.active: local
+#logging:
+# level:
+#  org:
+#    hibernate:
+#       type: trace
+
+---
+spring:
+  profiles: local
+  jpa:
+    database: oracle
+    show-sql: true 
+server:
+    port: 8444
+notificationService:
+    ACCOUNT_SID: 1234
+    AUTH_TOKEN: 5678
+    FROM_NUMBER: 15005550006
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=
+---
+spring:
+  profiles: dev
+  jpa:
+    database: oracle
+    show-sql: false 
+server:
+    port: 8444
+notificationService:
+    ACCOUNT_SID: xyz
+    AUTH_TOKEN: abcd
+    FROM_NUMBER: 18133080309
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=        
+---
+spring:
+  profiles: sit
+  jpa:
+    database: oracle
+    show-sql: false 
+server:
+    port: 8444
+notificationService:
+    ACCOUNT_SID: xyz
+    AUTH_TOKEN: abcd
+    FROM_NUMBER: 18133080309
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg= 
+            
+---
+spring:
+  profiles: prod
+  jpa:
+    database: oracle
+    show-sql: false 
+server:
+    port: 8444
+notificationService:
+    ACCOUNT_SID: xyz
+    AUTH_TOKEN: abcd
+    FROM_NUMBER: 18133080309
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=        
+     

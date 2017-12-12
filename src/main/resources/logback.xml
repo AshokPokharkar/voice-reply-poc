@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="180 seconds">
+	<property name="app.name" value="sample-voice-reply-service" />
+	<property name="app.project.log.root" value="com.twilio" />
+	<include resource="logback-common.xml" />
+</configuration> 

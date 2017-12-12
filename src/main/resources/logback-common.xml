@@ -1,0 +1,202 @@
+<included>
+	<contextName>${app.name}</contextName>
+	<jmxConfigurator />
+
+	<property name="pattern.default"
+		value="%d ${PID} %-5level [%thread] %logger{35} [%file:%line] --- %msg %n" />
+	<property name="maxfilehistory" value="30" />
+
+	<property name="infra.log.location"  value="${INFRA_LOG_PATH:-/usr/apps/naetools/opa/logs/}" />
+	<property name="active_profile" value="${spring.profiles.active:-default_profile}" />
+	<property name="active_profile_logstash" value="${SPRING_PROFILES_ACTIVE:-default_profile}" />
+	<property name="logstash.hostname" value="${LOGSTASH_HOSTNAME:-undefined}" />
+	<property name="logstash.port" value="${LOGSTASH_PORT:-undefined}" />
+	<property name="consoleonly.enabled" value="${APP_LOG_CONSOLE_ONLY:-false}" />
+	<property name="loglevel.performance" value="${APP_LOG_LEVEL_PERFORMANCE:-INFO}" />
+	<property name="loglevel.app" value="${APP_LOG_LEVEL_APP:-INFO}" />
+	<property name="loglevel.common" value="${APP_LOG_LEVEL_COMMON:-INFO}" />
+	<property name="loglevel.root" value="${APP_LOG_LEVEL_ROOT:-INFO}" />
+
+	<property name="performance.log.root" value="com.vz.infra.common.monitor.performance" />
+	<property name="common.log.root" value="com.vz.infra.common" />
+	<!-- <property name="spring.jpa.root" value="org.springframework.orm" /> 
+		<property name="spring.security.root" value="org.springframework.security" 
+		/> <property name="hibernate.transaction.root" value="org.hibernate.transaction" 
+		/> <property name="spring.transaction.root" value="org.hibernate.transaction" 
+		/> <property name="netflix.eureka.root" value="com.netflix" /> <property 
+		name="fasterxml.root" value="com.fasterxml" /> -->
+
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<Pattern>${pattern.default}</Pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>TRACE</level>
+		</filter>
+	</appender>
+
+	<!-- shut off ConfigServer logging -->
+	<logger
+		name="org.springframework.cloud.config.client.ConfigServicePropertySourceLocator">
+		<level value="OFF" />
+	</logger>
+
+	<!-- only console -->
+	<if condition='property("consoleonly.enabled").equalsIgnoreCase("true")'>
+		<then>
+			<logger name="${performance.log.root}" additivity="false">
+				<level value="${loglevel.performance}" />
+				<appender-ref ref="consoleAppender" />
+			</logger>
+			<logger name="${app.project.log.root}" additivity="false">
+				<level value="${loglevel.app}" />
+				<appender-ref ref="consoleAppender" />
+			</logger>
+			<logger name="${common.log.root}" additivity="false">
+				<level value="${loglevel.common}" />
+				<appender-ref ref="consoleAppender" />
+			</logger>
+			<root>
+				<level value="${loglevel.root}" />
+				<appender-ref ref="consoleAppender" />
+			</root>
+		</then>
+		<else>
+			<!-- for file based logs -->
+			<if
+				condition='property("logstash.hostname").contains("undefined") || property("logstash.port").contains("undefined")'>
+				<then>
+					<appender name="MAIN"
+						class="ch.qos.logback.core.rolling.RollingFileAppender">
+						<File>${infra.log.location}/${app.name}.log</File>
+						<rollingPolicy
+							class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+							<FileNamePattern>${infra.log.location}/${app.name}.%d{yyyy-MM-dd}.log
+							</FileNamePattern>
+							<maxHistory>${maxfilehistory}</maxHistory>
+						</rollingPolicy>
+						<encoder>
+							<Pattern>${pattern.default}</Pattern>
+						</encoder>
+					</appender>
+
+					<appender name="MAIN_JSON"
+						class="ch.qos.logback.core.rolling.RollingFileAppender">
+						<File>${infra.log.location}/${app.name}.json.log</File>
+						<rollingPolicy
+							class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+							<FileNamePattern>${infra.log.location}/${app.name}.%d{yyyy-MM-dd}.json.log
+							</FileNamePattern>
+							<maxHistory>${maxfilehistory}</maxHistory>
+						</rollingPolicy>
+
+						<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+							<includeCallerInfo>true</includeCallerInfo>
+							<customFields>{"hostname":"${HOSTNAME}",
+								"appname":"${app.name}","PID":"${PID}",
+								"environment":"${IVAPP_ENVIRONMENT}","active_profile":"${active_profile}"
+								}
+							</customFields>
+						</encoder>
+
+					</appender>
+
+
+					<appender name="PERFORMANCE"
+						class="ch.qos.logback.core.rolling.RollingFileAppender">
+						<File>${infra.log.location}/performance.log</File>
+						<rollingPolicy
+							class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+							<FileNamePattern>${infra.log.location}/performance.%d{yyyy-MM-dd}.log
+							</FileNamePattern>
+							<maxHistory>${maxfilehistory}</maxHistory>
+						</rollingPolicy>
+						<encoder>
+							<Pattern>${pattern.default}</Pattern>
+						</encoder>
+					</appender>
+
+					<appender name="PERFORMANCE_JSON"
+						class="ch.qos.logback.core.rolling.RollingFileAppender">
+						<File>${infra.log.location}/performance.json.log</File>
+						<rollingPolicy
+							class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+							<FileNamePattern>${infra.log.location}/performance.%d{yyyy-MM-dd}.json.log
+							</FileNamePattern>
+							<maxHistory>${maxfilehistory}</maxHistory>
+						</rollingPolicy>
+
+						<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+							<includeCallerInfo>true</includeCallerInfo>
+							<customFields>{"hostname":"${HOSTNAME}",
+								"appname":"${app.name}","PID":"${PID}",
+								"environment":"${IVAPP_ENVIRONMENT}","active_profile":"${active_profile}"
+								}
+							</customFields>
+						</encoder>
+					</appender>
+
+					<logger name="${performance.log.root}" additivity="false">
+						<level value="${loglevel.performance}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="PERFORMANCE" />
+						<appender-ref ref="PERFORMANCE_JSON" />
+					</logger>
+					<logger name="${app.project.log.root}" additivity="false">
+						<level value="${loglevel.app}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="MAIN" />
+						<appender-ref ref="MAIN_JSON" />
+					</logger>
+					<logger name="${common.log.root}" additivity="false">
+						<level value="${loglevel.common}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="MAIN" />
+						<appender-ref ref="MAIN_JSON" />
+					</logger>
+					<root>
+						<level value="${loglevel.root}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="MAIN" />
+						<appender-ref ref="MAIN_JSON" />
+					</root>
+				</then>
+				<else>
+					<!-- For cloud based logstash model -->
+					<appender name="LOGSTASH"
+						class="net.logstash.logback.appender.LogstashSocketAppender">
+						<host>${logstash.hostname}</host>
+						<port>${logstash.port}</port>
+						<includeCallerInfo>true</includeCallerInfo>
+						<customFields>{"hostname":"${HOSTNAME}","appname":"${app.name}","PID":"${PID}","environment":"${IVAPP_ENVIRONMENT}","active_profile":"${active_profile_logstash}"
+							}
+						</customFields>
+					</appender>
+					<logger name="${performance.log.root}" additivity="false">
+						<level value="${loglevel.performance}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="LOGSTASH" />
+					</logger>
+					<logger name="${app.project.log.root}" additivity="false">
+						<level value="${loglevel.app}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="LOGSTASH" />
+					</logger>
+					<logger name="${common.log.root}" additivity="false">
+						<level value="${loglevel.common}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="LOGSTASH" />
+					</logger>
+					<root>
+						<level value="${loglevel.root}" />
+						<appender-ref ref="consoleAppender" />
+						<appender-ref ref="LOGSTASH" />
+					</root>
+				</else>
+			</if>
+
+		</else>
+	</if>
+
+
+</included>
