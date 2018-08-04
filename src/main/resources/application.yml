@@ -17,7 +17,7 @@ server:
 notificationService:
     ACCOUNT_SID: 1234
     AUTH_TOKEN: 5678
-    FROM_NUMBER: 15005550006
+    FROM_NUMBER: 15005555555
     VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=
 ---
 spring:
@@ -30,8 +30,8 @@ server:
 notificationService:
     ACCOUNT_SID: xyz
     AUTH_TOKEN: abcd
-    FROM_NUMBER: 18133080309
-    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=        
+    FROM_NUMBER: 15005555555
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559aww9e?msg=        
 ---
 spring:
   profiles: sit
@@ -43,8 +43,8 @@ server:
 notificationService:
     ACCOUNT_SID: xyz
     AUTH_TOKEN: abcd
-    FROM_NUMBER: 18133080309
-    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg= 
+    FROM_NUMBER: 15005555555
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559wwa9e?msg= 
             
 ---
 spring:
@@ -57,6 +57,6 @@ server:
 notificationService:
     ACCOUNT_SID: xyz
     AUTH_TOKEN: abcd
-    FROM_NUMBER: 18133080309
-    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9e?msg=        
+    FROM_NUMBER: 15005555555ww
+    VOICE_TYPE_URL: https://handler.twilio.com/twiml/EH90eae4d71b74d19adaf217ba1c559a9eww?msg=        
      
